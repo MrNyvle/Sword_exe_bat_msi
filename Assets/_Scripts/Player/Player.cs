@@ -116,7 +116,7 @@ public class Player : MonoBehaviour
             GameObject arrow;
             arrow = Instantiate(_arrowPrefab, transform.position, new Quaternion(0, 0, 0, 0));
             arrow.GetComponent<Rigidbody2D>().velocity = _shootDirection * 5;
-            //arrow.transform.rotation = Quaternion.LookRotation(_shootDirection.);
+            arrow.transform.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(-_shootDirection.x, _shootDirection.y) * Mathf.Rad2Deg);
         }
     }
     

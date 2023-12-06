@@ -15,7 +15,7 @@ GameObject:
   - component: {fileID: 3331872571335514852}
   - component: {fileID: 2675966907652874950}
   - component: {fileID: 5612208188742004589}
-  m_Layer: 0
+  m_Layer: 7
   m_Name: Player
   m_TagString: Player
   m_Icon: {fileID: 0}
@@ -50,6 +50,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   _speed: 5
+  _arrowPrefab: {fileID: 6436789213110313170, guid: 23beabd1710fdeb4494e23bfadbd2be6, type: 3}
 --- !u!50 &4024717235073650165
 Rigidbody2D:
   serializedVersion: 4
