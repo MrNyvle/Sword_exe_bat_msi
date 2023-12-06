@@ -8,11 +8,13 @@ using UnityEngine;
 public class Player : MonoBehaviour
 {
     [SerializeField] private float _speed = 20.0f;
+    [SerializeField] private GameObject _arrowPrefab;
 
     private Rigidbody2D _rb;
     private Player_InputActions _inputAction;
     private SpriteRenderer _spriteRenderer;
     private Vector2 _playerDirection = Vector2.zero;
+    private Vector2 _shootDirection = Vector2.zero;
     private Animator _animator;
 
     private List<Chest> _chests = new ();
@@ -40,6 +42,13 @@ public class Player : MonoBehaviour
         {
             _playerDirection = moving.ReadValue<Vector2>();
         };
+
+        _inputAction.Player.Attack.performed += attack =>
+        {
+            _shootDirection = attack.ReadValue<Vector2>();
+            Shoot();
+        };
+
         _inputAction.Player.Interact.performed += interacting =>
         {
             Interact();
@@ -48,7 +57,6 @@ public class Player : MonoBehaviour
 
     private void FixedUpdate()
     {
-        Debug.Log(_playerDirection);
         _rb.velocity = _playerDirection * _speed;
         if (_playerDirection.x > 0) 
         {
@@ -92,13 +100,23 @@ public class Player : MonoBehaviour
 
     private void Interact()
     {
-        Debug.Log("interact");
         if (_chests.Count>0)
         {
             foreach (var chest in _chests)
             {
                 chest.OpenChest();
             }
+        }
+    }
+
+    private void Shoot()
+    {
+        if (true/*_inventory.Contains(GameManager.instance.CheckLootTable("Bow"))*/)
+        {
+            GameObject arrow;
+            arrow = Instantiate(_arrowPrefab, transform.position, new Quaternion(0, 0, 0, 0));
+            arrow.GetComponent<Rigidbody2D>().velocity = _shootDirection * 5;
+            //arrow.transform.rotation = Quaternion.LookRotation(_shootDirection.);
         }
     }
     
