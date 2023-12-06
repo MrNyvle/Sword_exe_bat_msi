@@ -18,7 +18,7 @@ namespace _Scripts
         [SerializeField] private Sprite spriteChestOpened;
         [SerializeField] private GameObject[] uis;
 
-        private readonly Chest[] _chestsForOpen;
+        private Chest[] _chestsForOpen;
 
         private void Awake()
         {
@@ -26,7 +26,7 @@ namespace _Scripts
             _spriteRenderer = GetComponent<SpriteRenderer>();
         }
         
-        public Chest(String name, Item item, Chest[] chestsForOpen = null)
+        public void SetupChest(String name, Item item, Chest[] chestsForOpen = null)
         {
             gameObject.name = name;
             _item = item;
@@ -45,7 +45,7 @@ namespace _Scripts
                 index = 0;
             }
             uis[index].gameObject.SetActive(!uis[index].gameObject.activeSelf);
-            TMP_Text tmpText = uis[index].GetComponent<TMP_Text>();
+            TMP_Text tmpText = uis[index].GetComponentInChildren<TextMeshProUGUI>();
 
             tmpText.text = "Open" + checkValues.Item2;
 
@@ -77,17 +77,26 @@ namespace _Scripts
 
         public void OpenChest()
         {
-            _animator.enabled = true;
+            Debug.Log("Openchest");
+            if (CheckForPredecessors().Item1)
+            {
+                _animator.enabled = true;
+            }
         }
-
-
+        
         public void ChestOpened()
         {
+            Debug.Log("Chest opened");
             _animator.enabled = false;
 
             _spriteRenderer.sprite = spriteChestOpened;
 
             GameManager.instance.GiveItemToPlayer(_item);
+
+            foreach (var ui in uis)
+            {
+                ui.SetActive(false);
+            }
         }
     }
 }
