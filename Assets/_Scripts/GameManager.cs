@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.Serialization;
+using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
 namespace _Scripts
@@ -18,6 +20,7 @@ namespace _Scripts
         [SerializeField] private List<Item> _itemsInEarlyChest = new List<Item>();
         [SerializeField] private List<Chest> _chests = new();
         [SerializeField] private List<GameObject> _enemies = new List<GameObject>();
+        [SerializeField] private TextMeshProUGUI _seedText;
         [SerializeField] private int seed;
         [SerializeField] private int keyDropChance;
         
@@ -45,6 +48,8 @@ namespace _Scripts
             StartCoroutine(SpawnEnemies());
             
             GenerateContent();
+
+            _seedText.text = seed.ToString();
         }
 
         #region Generation
@@ -110,6 +115,11 @@ namespace _Scripts
                 enemy.SetActive(true);
                 yield return new WaitForSeconds(Random.value / 2);
             }
+        }
+
+        public void CopySeed()
+        {
+            GUIUtility.systemCopyBuffer = seed.ToString();
         }
     }
 }
