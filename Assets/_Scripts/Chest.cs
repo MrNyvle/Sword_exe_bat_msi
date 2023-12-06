@@ -1,24 +1,35 @@
-using System;
-using System.Linq;
-using NaughtyAttributes;
+using System.Collections.Generic;
 using TMPro;
-using Unity.VisualScripting;
-using UnityEditor.Tilemaps;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 namespace _Scripts
 {
+    public enum Difficulty
+    {
+        Early,
+        Late
+    }
+    
     public class Chest : MonoBehaviour
     {
+        [SerializeField] private Sprite spriteChestOpened; 
+        [SerializeField] private GameObject[] uis;
+        [SerializeField] private Difficulty difficulty;
+
+        private int _id;
         private Item _item;
-        private bool _isOpen;
-        private bool _canBeOpened;
         private Animator _animator;
         private SpriteRenderer _spriteRenderer;
-        [SerializeField] private Sprite spriteChestOpened;
-        [SerializeField] private GameObject[] uis;
+        
+        private List<Chest> _chestsForOpen = new ();
+        
+        private bool _isOpen;
+        
+        public Difficulty Difficulty => difficulty;
 
-        private Chest[] _chestsForOpen;
+        public Item Item => _item;
+
 
         private void Awake()
         {
@@ -26,19 +37,16 @@ namespace _Scripts
             _spriteRenderer = GetComponent<SpriteRenderer>();
         }
         
-        public void SetupChest(String name, Item item, Chest[] chestsForOpen = null)
+        public void SetupChest(int prmID, Item prmItem)
         {
-            gameObject.name = name;
-            _item = item;
-            _chestsForOpen = chestsForOpen;
-            _canBeOpened = chestsForOpen != null;
+            _id = prmID;
+            _item = prmItem;
         }
-
-        [Button("toggle")]
+        
         public void ToggleMessage()
         {
             int index = 1;
-            (bool, string) checkValues = CheckForPredecessors();
+            (bool, string) checkValues = CheckForParent();
             
             if (checkValues.Item1)
             {
@@ -51,7 +59,7 @@ namespace _Scripts
 
         }
 
-        private (bool,string) CheckForPredecessors()
+        private (bool,string) CheckForParent()
         {
             string notOpenedChests = " ";
             if (_chestsForOpen == null)
@@ -63,7 +71,7 @@ namespace _Scripts
             {
                 if (!chest._isOpen)
                 {
-                    notOpenedChests += chest.gameObject.name.ToUpper();
+                    notOpenedChests += "(" + chest._id.ToString().ToUpper() + ")";
                 }
             }
 
@@ -78,7 +86,7 @@ namespace _Scripts
         public void OpenChest()
         {
             Debug.Log("Openchest");
-            if (CheckForPredecessors().Item1)
+            if (CheckForParent().Item1 && !_isOpen)
             {
                 _animator.enabled = true;
             }
@@ -93,10 +101,16 @@ namespace _Scripts
 
             GameManager.instance.GiveItemToPlayer(_item);
 
-            foreach (var ui in uis)
-            {
-                ui.SetActive(false);
-            }
+            uis[0].transform.parent.gameObject.SetActive(false);
+
+            _isOpen = true;
+
         }
+
+        public void AddParent(Chest chests)
+        {
+            _chestsForOpen.Add(chests);
+        }
+        
     }
 }

@@ -17,7 +17,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!224 &709637887841725632
 RectTransform:
   m_ObjectHideFlags: 0
@@ -92,7 +92,7 @@ GameObject:
   - component: {fileID: 3222119742658727640}
   m_Layer: 0
   m_Name: Chest
-  m_TagString: Untagged
+  m_TagString: Chest
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
@@ -126,6 +126,10 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   spriteChestOpened: {fileID: 21300000, guid: c31d9a36fcdf15d4ebd414e0bd861aa7, type: 3}
+  uis:
+  - {fileID: 6286413452308789193}
+  - {fileID: 2523047394036930861}
+  difficulty: 0
 --- !u!212 &1981319673249950664
 SpriteRenderer:
   m_ObjectHideFlags: 0

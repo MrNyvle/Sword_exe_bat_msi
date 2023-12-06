@@ -111,7 +111,8 @@ public class Player : MonoBehaviour
 
     private void Shoot()
     {
-        if (true/*_inventory.Contains(GameManager.instance.CheckLootTable("Bow"))*/)
+        
+        if (_inventory.Contains(GameManager.instance.CheckLootTable("Bow")))
         {
             GameObject arrow;
             arrow = Instantiate(_arrowPrefab, transform.position, new Quaternion(0, 0, 0, 0));
