@@ -53,7 +53,7 @@ namespace _Scripts
 
         private (bool,string) CheckForPredecessors()
         {
-            string notOpenedChests = "";
+            string notOpenedChests = " ";
             if (_chestsForOpen == null)
             {
                 return (true,notOpenedChests);
@@ -67,7 +67,7 @@ namespace _Scripts
                 }
             }
 
-            if (notOpenedChests != "") 
+            if (notOpenedChests == " ") 
             {
                 return (true,notOpenedChests);
             }
