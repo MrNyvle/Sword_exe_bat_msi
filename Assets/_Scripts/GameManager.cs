@@ -53,7 +53,7 @@ namespace _Scripts
         {
             foreach (var chest in _chests)
             {
-                chest.SetupChest(_chests.IndexOf(chest),GetRandomItem(chest.Difficulty));
+                chest.SetupChest(_chests.IndexOf(chest)+1,GetRandomItem(chest.Difficulty));
             }
 
             foreach (var chest in _chests)
