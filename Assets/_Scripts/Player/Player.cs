@@ -20,8 +20,6 @@ public class Player : MonoBehaviour
     private bool _isShooting = false;
     private float _nextShot = 0.0f;
     private bool _isBombAvailable = true;
-    
-    private List<Chest> _chests = new ();
     private List<GameObject> _interractables = new ();
 
     private List<Item> _inventory = new ();
@@ -100,8 +98,7 @@ public class Player : MonoBehaviour
             Chest chest = other.GetComponent<Chest>();
             
             chest.ToggleMessage();
-
-            
+            _interractables.Add(chest.gameObject);         
         }
         if (other.tag.Equals("Door"))
         {

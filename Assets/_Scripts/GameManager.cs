@@ -13,7 +13,7 @@ namespace _Scripts
 {
     public class GameManager : Singleton<GameManager>
     {
-        //TODO: document qui explique l'algo; entrer la seed; faire scene avec juste les coffres et les portes; section soluce; boutons qui add des coffres 
+        //TODO: document qui explique l'algo; section soluce; boutons qui add des coffres; fix locked chest (key in each others chest)
 
         [SerializeField] private Player player;
         
@@ -27,7 +27,6 @@ namespace _Scripts
         [SerializeField] private Door endDoor ;
         [SerializeField] private List<GameObject> _enemies = new List<GameObject>();
         [SerializeField] private TextMeshProUGUI _seedText;
-        [SerializeField] private int seed;
         [SerializeField] private int keyDropChance;
         
 
@@ -36,7 +35,6 @@ namespace _Scripts
         private Dictionary<string, Item> _lootTable = new Dictionary<string, Item>();
         private void Start()
         {
-            Random.InitState(seed);
             _earlyLootTable = _itemsInEarlyChest.ToDictionary(x => x.Name, x => x);
             _lateLootTable = _itemsInLateChest.ToDictionary(x => x.Name, x => x);
             
@@ -60,7 +58,7 @@ namespace _Scripts
             
             GenerateContent();
 
-            _seedText.text = seed.ToString();
+            _seedText.text = Random.seed.ToString();
         }
 
         #region Generation
@@ -191,7 +189,7 @@ namespace _Scripts
 
         public void CopySeed()
         {
-            GUIUtility.systemCopyBuffer = seed.ToString();
+            GUIUtility.systemCopyBuffer = Random.seed.ToString();
         }
     }
 }

@@ -17,6 +17,7 @@ namespace _Scripts
         [SerializeField] private Sprite spriteChestOpened; 
         [SerializeField] private GameObject[] uis;
         [SerializeField] private Difficulty difficulty;
+        [SerializeField] private TextMeshProUGUI idText;
 
         public int id;
         private Item _item;
@@ -44,6 +45,7 @@ namespace _Scripts
             id = prmID;
             _item = prmItem;
             isSetup = true;
+            idText.text = id.ToString();
         }
         
         public void ToggleMessage()
