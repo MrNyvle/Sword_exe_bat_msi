@@ -10,8 +10,8 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: ac7d6f74dfb0cb54c9c70a1bc79d27fb, type: 3}
-  m_Name: Key
+  m_Name: EndDoorKey
   m_EditorClassIdentifier: 
-  Name: Key
+  Name: EndDoorKey
   IsKey: 1
-  AdditionalData: 0
+  AdditionalData: 2

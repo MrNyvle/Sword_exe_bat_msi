@@ -5,6 +5,7 @@ TagManager:
   serializedVersion: 2
   tags:
   - Chest
+  - Door
   layers:
   - Default
   - TransparentFX
@@ -45,24 +46,33 @@ TagManager:
   - name: Floor
     uniqueID: 4170024269
     locked: 0
-  - name: Wall
-    uniqueID: 1093581153
-    locked: 0
   - name: Chest
     uniqueID: 1856790713
+    locked: 0
+  - name: Wall
+    uniqueID: 1093581153
     locked: 0
   - name: Torches
     uniqueID: 994200809
     locked: 0
+  - name: Doors
+    uniqueID: 3800648869
+    locked: 0
+  - name: WallOverDoors
+    uniqueID: 1800835831
+    locked: 0
+  - name: Chests
+    uniqueID: 1800400551
+    locked: 0
   - name: Player
     uniqueID: 2955126417
+    locked: 0
+  - name: Arrows
+    uniqueID: 2397205779
     locked: 0
   - name: WallOverPlayer
     uniqueID: 2732498167
     locked: 0
   - name: UI
     uniqueID: 3697991915
-    locked: 0
-  - name: Arrows
-    uniqueID: 2397205779
     locked: 0

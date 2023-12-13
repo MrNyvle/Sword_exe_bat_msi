@@ -2,6 +2,7 @@ using System.Collections.Generic;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
+using UnityEngine.Serialization;
 
 namespace _Scripts
 {
@@ -17,14 +18,15 @@ namespace _Scripts
         [SerializeField] private GameObject[] uis;
         [SerializeField] private Difficulty difficulty;
 
-        private int _id;
+        public int id;
         private Item _item;
         private Animator _animator;
         private SpriteRenderer _spriteRenderer;
         
         private List<Chest> _chestsForOpen = new ();
         
-        private bool _isOpen;
+        public bool isOpen;
+        public bool isSetup;
         
         public Difficulty Difficulty => difficulty;
 
@@ -39,14 +41,15 @@ namespace _Scripts
         
         public void SetupChest(int prmID, Item prmItem)
         {
-            _id = prmID;
+            id = prmID;
             _item = prmItem;
+            isSetup = true;
         }
         
         public void ToggleMessage()
         {
             int index = 1;
-            (bool, string) checkValues = CheckForParent();
+            (bool, string) checkValues = CheckForParents();
             
             if (checkValues.Item1)
             {
@@ -59,7 +62,7 @@ namespace _Scripts
 
         }
 
-        private (bool,string) CheckForParent()
+        private (bool,string) CheckForParents()
         {
             string notOpenedChests = " ";
             if (_chestsForOpen == null)
@@ -69,9 +72,9 @@ namespace _Scripts
             
             foreach (var chest in _chestsForOpen)
             {
-                if (!chest._isOpen)
+                if (!chest.isOpen)
                 {
-                    notOpenedChests += "(" + chest._id.ToString().ToUpper() + ")";
+                    notOpenedChests += "(" + chest.id.ToString().ToUpper() + ")";
                 }
             }
 
@@ -86,7 +89,7 @@ namespace _Scripts
         public void OpenChest()
         {
             Debug.Log("Openchest");
-            if (CheckForParent().Item1 && !_isOpen)
+            if (CheckForParents().Item1 && !isOpen)
             {
                 _animator.enabled = true;
             }
@@ -103,7 +106,7 @@ namespace _Scripts
 
             uis[0].transform.parent.gameObject.SetActive(false);
 
-            _isOpen = true;
+            isOpen = true;
 
         }
 

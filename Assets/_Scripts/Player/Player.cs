@@ -22,6 +22,8 @@ public class Player : MonoBehaviour
     private bool _isBombAvailable = true;
     
     private List<Chest> _chests = new ();
+    private List<GameObject> _interractables = new ();
+
     private List<Item> _inventory = new ();
     private void Awake()
     {
@@ -99,7 +101,13 @@ public class Player : MonoBehaviour
             
             chest.ToggleMessage();
 
-            _chests.Add(chest);
+            
+        }
+        if (other.tag.Equals("Door"))
+        {
+            Door door = other.GetComponent<Door>();  
+            door.ToggleMessage();
+            _interractables.Add(door.gameObject);                
         }
     }
     
@@ -108,23 +116,39 @@ public class Player : MonoBehaviour
         if (other.tag.Equals("Chest"))
         {
             Chest chest = other.GetComponent<Chest>();
-            
-            chest.ToggleMessage();
-
-            if (_chests.Contains(chest))
-            {
-                _chests.Remove(chest);
+            chest.ToggleMessage(); 
+            if (_interractables.Contains(chest.gameObject)) 
+            { 
+                _interractables.Remove(chest.gameObject);
+            }
+        }
+        
+        if (other.tag.Equals("Door"))
+        {
+            Door door = other.GetComponent<Door>();
+            door.ToggleMessage(); 
+            if (_interractables.Contains(door.gameObject)) 
+            { 
+                _interractables.Remove(door.gameObject);
             }
         }
     }
 
     private void Interact()
     {
-        if (_chests.Count>0)
+        if (_interractables.Count>0)
         {
-            foreach (var chest in _chests)
+            foreach (var chest in _interractables)
             {
-                chest.OpenChest();
+                if (chest.gameObject.tag.Equals("Chest"))
+                {
+                    chest.GetComponent<Chest>().OpenChest();
+                }
+                
+                if (chest.gameObject.tag.Equals("Door"))
+                {
+                    chest.GetComponent<Door>().OpenDoor();
+                }
             }
         }
     }

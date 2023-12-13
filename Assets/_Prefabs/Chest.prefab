@@ -132,6 +132,8 @@ MonoBehaviour:
   - {fileID: 6286413452308789193}
   - {fileID: 2523047394036930861}
   difficulty: 0
+  id: 0
+  isOpen: 0
 --- !u!212 &1981319673249950664
 SpriteRenderer:
   m_ObjectHideFlags: 0
@@ -170,8 +172,8 @@ SpriteRenderer:
   m_AutoUVMaxDistance: 0.5
   m_AutoUVMaxAngle: 89
   m_LightmapParameters: {fileID: 0}
-  m_SortingLayerID: 0
-  m_SortingLayer: 0
+  m_SortingLayerID: 1856790713
+  m_SortingLayer: 2
   m_SortingOrder: 3
   m_Sprite: {fileID: 21300000, guid: 6671a0bab90a9c8409a3015e567e8bb2, type: 3}
   m_Color: {r: 1, g: 1, b: 1, a: 1}
@@ -285,7 +287,7 @@ MonoBehaviour:
   m_UseRendererSilhouette: 1
   m_CastsShadows: 1
   m_SelfShadows: 0
-  m_ApplyToSortingLayers: 000000004d858df861b92e41b960ac6ee94c423b91a623b0f79cdea2ebe06adc
+  m_ApplyToSortingLayers: 000000004d858df8b960ac6ee94c423ba54c89e2a7ee4f6b91a623b01375e28ef79cdea261b92e41ebe06adc
   m_ShapePath:
   - {x: -0.5, y: -0.5, z: 0}
   - {x: -0.50005186, y: 0.3123958, z: 0}

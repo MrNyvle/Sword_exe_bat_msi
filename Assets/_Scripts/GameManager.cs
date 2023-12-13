@@ -13,12 +13,18 @@ namespace _Scripts
 {
     public class GameManager : Singleton<GameManager>
     {
+        //TODO: document qui explique l'algo; entrer la seed; faire scene avec juste les coffres et les portes; section soluce; boutons qui add des coffres 
 
         [SerializeField] private Player player;
         
         [SerializeField] private List<Item> _itemsInLateChest = new List<Item>();
         [SerializeField] private List<Item> _itemsInEarlyChest = new List<Item>();
-        [SerializeField] private List<Chest> _chests = new();
+        [SerializeField] private Item doorKey;
+        [SerializeField] private Item endDoorKey;
+        [SerializeField] private GameObject chests;
+        private List<Chest> _chests = new();
+        [SerializeField] private List<Door> doors = new();
+        [SerializeField] private Door endDoor ;
         [SerializeField] private List<GameObject> _enemies = new List<GameObject>();
         [SerializeField] private TextMeshProUGUI _seedText;
         [SerializeField] private int seed;
@@ -42,6 +48,11 @@ namespace _Scripts
                     _lootTable.Add(pair.Key, pair.Value);
                 }
             }
+
+            for (int i = 0; i < chests.transform.childCount; i++)
+            {
+                _chests.Add(chests.transform.GetChild(i).GetComponent<Chest>());
+            }
             
             
             //_chests[0].SetupChest("A", new Item("Sword", 10));
@@ -56,37 +67,98 @@ namespace _Scripts
 
         private void GenerateContent()
         {
+            //Generate lists of early chests and late chests
+            List<Chest> earlyChestsList = _chests.Where(x => x.Difficulty == Difficulty.Early).ToList();
+            
+            List<Chest> lateChestList = _chests.Where(x => x.Difficulty == Difficulty.Late).ToList();
+            
+            //Generate a key in an early chest to open doors that will lead to the late zone 
+            int chestIndex = Random.Range(0, earlyChestsList.Count);
+            
+            Chest tempchest = earlyChestsList[chestIndex];
+            
+            //generate the key in a random early chest 
+            tempchest.SetupChest(_chests.IndexOf(tempchest)+ 1, doorKey);
+            
+            //give the chest to the doors so that we can check if chest opened before opening the door 
+            foreach (var door in doors)
+            {
+                door.AddParent(earlyChestsList[chestIndex]);
+            }
+            
+            //Generate the end key to open the end door
+            chestIndex = Random.Range(0, lateChestList.Count);
+            
+            tempchest = lateChestList[chestIndex];
+            
+            //generate the key in a random late chest 
+            tempchest.SetupChest(_chests.IndexOf(tempchest)+ 1, doorKey);
+            
+            //give the chest to the door so that we can check if chest opened before opening the door 
+            endDoor.AddParent(lateChestList[chestIndex]);
+            
+            //The previous part ensures that every door is openable 
+            
+            
+            //Now we generate random items in the chests
             foreach (var chest in _chests)
             {
-                chest.SetupChest(_chests.IndexOf(chest)+1,GetRandomItem(chest.Difficulty));
+                if (!chest.isSetup)
+                {
+                    chest.SetupChest(_chests.IndexOf(chest)+1,GetRandomItem(chest.Difficulty));
+                }
             }
 
+            //for each chest if they have a key we will affect that key to another chest of the same difficulty or above, we also remove itself from the pool of chests 
+            //also if that key is for the end door we add it to the end door's check list
+            //also if that key is for the other doors we add it to the other doors' check list
             foreach (var chest in _chests)
             {
-                if (chest.Item.Name == "Key")
+                // If key and additionalData is set to 1 then it's a key for doors
+                // If key and additionalData is set to 2 then it's a key for end door
+                if (chest.Item.IsKey && chest.Item.AdditionalData == 0)
                 {
-                    if (chest.Difficulty == Difficulty.Late)
-                    {
-                        IEnumerable<Chest> lateChest = _chests.Where(x => x.Difficulty == Difficulty.Late);
-
-                        List<Chest> enumerable = lateChest.ToList();
-                        enumerable.ToList()[Random.Range(0,enumerable.Count())].AddParent(chest);
-                    }
-                    else
-                    {
-                        _chests[Random.Range(0,_chests.Count())].AddParent(chest);
+                    switch (chest.Item.AdditionalData)
+                    { 
+                        case 1 :
+                            foreach (var door in doors)
+                            {
+                                door.AddParent(chest);
+                            }
+                            break;
+                        
+                        case 2 : 
+                            endDoor.AddParent(chest);
+                            break;
+                        
+                        default:
+                            if (chest.Difficulty == Difficulty.Late)
+                            {
+                                lateChestList.Where(x => x != chest).ToList()[Random.Range(0, lateChestList.Count-1)].AddParent(chest);
+                            }
+                            else
+                            {
+                                _chests.Where(x => x != chest).ToList()[Random.Range(0,_chests.Count-1)].AddParent(chest);
+                            }
+                            break;
                     }
                 }
             }
         }
 
 
+        /// <summary>
+        /// Returns a random item from the loot table, drop for keys have a %
+        /// </summary>
+        /// <param name="difficulty"></param>
+        /// <returns> Item </returns>
         private Item GetRandomItem(Difficulty difficulty)
         {
             float chance = Random.value * 100;
             
             if (difficulty == Difficulty.Early)
             {
+                //TODO : add all keys to loot tables
                 return chance > keyDropChance ? _earlyLootTable.Values.ToList()[Random.Range(0, _earlyLootTable.Count)] : _earlyLootTable["Key"] ;
             }
                             
