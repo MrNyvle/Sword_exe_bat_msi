@@ -90,6 +90,7 @@ GameObject:
   - component: {fileID: 7920112833603919189}
   - component: {fileID: 7242125421281181580}
   - component: {fileID: 3222119742658727640}
+  - component: {fileID: 750856996441488162}
   m_Layer: 0
   m_Name: Chest
   m_TagString: Chest
@@ -266,6 +267,44 @@ Rigidbody2D:
   m_SleepingMode: 1
   m_CollisionDetection: 0
   m_Constraints: 0
+--- !u!114 &750856996441488162
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5425805416682128330}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 7db70e0ea77f5ac47a8f4565a9406397, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  m_ShadowGroup: 0
+  m_ComponentVersion: 1
+  m_HasRenderer: 1
+  m_UseRendererSilhouette: 1
+  m_CastsShadows: 1
+  m_SelfShadows: 0
+  m_ApplyToSortingLayers: 000000004d858df861b92e41b960ac6ee94c423b91a623b0f79cdea2ebe06adc
+  m_ShapePath:
+  - {x: -0.5, y: -0.5, z: 0}
+  - {x: -0.50005186, y: 0.3123958, z: 0}
+  - {x: -0.37513375, y: 0.31239438, z: 0}
+  - {x: -0.37512505, y: 0.37492228, z: 0}
+  - {x: -0.25011438, y: 0.37489557, z: 0}
+  - {x: -0.25009465, y: 0.31244445, z: 0}
+  - {x: 0.2497104, y: 0.31251693, z: 0}
+  - {x: 0.24985966, y: 0.37488556, z: 0}
+  - {x: 0.37493092, y: 0.37491035, z: 0}
+  - {x: 0.37489003, y: 0.31241107, z: 0}
+  - {x: 0.50002575, y: 0.31237268, z: 0}
+  - {x: 0.5, y: -0.5, z: 0}
+  m_ShapePathHash: 535570044
+  m_Mesh: {fileID: 0}
+  m_InstanceId: 35606
+  m_LocalBounds:
+    m_Center: {x: -0.000013053417, y: -0.06253886, z: 0}
+    m_Extent: {x: 0.5000388, y: 0.43746114, z: 0}
 --- !u!1 &5829155274943219401
 GameObject:
   m_ObjectHideFlags: 0
@@ -751,8 +790,8 @@ Canvas:
   m_VertexColorAlwaysGammaSpace: 0
   m_AdditionalShaderChannelsFlag: 25
   m_UpdateRectTransformForStandalone: 0
-  m_SortingLayerID: 0
-  m_SortingOrder: 12
+  m_SortingLayerID: -596975381
+  m_SortingOrder: 0
   m_TargetDisplay: 0
 --- !u!114 &8916471946995547898
 MonoBehaviour:
