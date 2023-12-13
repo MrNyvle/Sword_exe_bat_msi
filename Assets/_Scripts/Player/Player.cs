@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private float _speed = 20.0f;
     [SerializeField] private GameObject _arrowPrefab;
+    [SerializeField] private float _attackSpeed = 1.0f;
 
     private Rigidbody2D _rb;
     private Player_InputActions _inputAction;
@@ -16,7 +17,8 @@ public class Player : MonoBehaviour
     private Vector2 _playerDirection = Vector2.zero;
     private Vector2 _shootDirection = Vector2.zero;
     private Animator _animator;
-
+    private bool _isShooting = false;
+    private float _nextShot = 0.0f;
     private List<Chest> _chests = new ();
 
     private List<Item> _inventory = new ();
@@ -46,7 +48,13 @@ public class Player : MonoBehaviour
         _inputAction.Player.Attack.performed += attack =>
         {
             _shootDirection = attack.ReadValue<Vector2>();
-            Shoot();
+            _isShooting = true;
+        };
+
+        _inputAction.Player.Attack.canceled += attack =>
+        {
+            _shootDirection = attack.ReadValue<Vector2>();
+            _isShooting = false;
         };
 
         _inputAction.Player.Interact.performed += interacting =>
@@ -67,6 +75,12 @@ public class Player : MonoBehaviour
             _spriteRenderer.flipX = true;
         }
         _animator.SetBool("isMoving", _playerDirection == Vector2.zero ? false : true);
+
+        if (_isShooting && Time.time > _nextShot)
+        {
+            Shoot();
+            _nextShot = Time.time + _attackSpeed;
+        }
         
         Debug.Log(_inventory.Count);
     }
@@ -111,7 +125,6 @@ public class Player : MonoBehaviour
 
     private void Shoot()
     {
-        
         if (_inventory.Contains(GameManager.instance.CheckLootTable("Bow")))
         {
             GameObject arrow;
