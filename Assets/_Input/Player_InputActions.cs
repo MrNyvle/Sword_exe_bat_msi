@@ -53,6 +53,15 @@ public partial class @Player_InputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""interactions"": """",
                     ""initialStateCheck"": false
+                },
+                {
+                    ""name"": ""Bomb"",
+                    ""type"": ""Button"",
+                    ""id"": ""f4ab01f1-4beb-4f86-8da7-4c75598fceed"",
+                    ""expectedControlType"": ""Button"",
+                    ""processors"": """",
+                    ""interactions"": """",
+                    ""initialStateCheck"": false
                 }
             ],
             ""bindings"": [
@@ -196,6 +205,17 @@ public partial class @Player_InputActions: IInputActionCollection2, IDisposable
                     ""processors"": """",
                     ""groups"": """",
                     ""action"": ""Interact"",
+                    ""isComposite"": false,
+                    ""isPartOfComposite"": false
+                },
+                {
+                    ""name"": """",
+                    ""id"": ""4f314295-eef6-4447-a30c-08dd20fad7d0"",
+                    ""path"": ""<Keyboard>/space"",
+                    ""interactions"": """",
+                    ""processors"": """",
+                    ""groups"": ""Keyboard&Mouse"",
+                    ""action"": ""Bomb"",
                     ""isComposite"": false,
                     ""isPartOfComposite"": false
                 }
@@ -786,6 +806,7 @@ public partial class @Player_InputActions: IInputActionCollection2, IDisposable
         m_Player_Move = m_Player.FindAction("Move", throwIfNotFound: true);
         m_Player_Attack = m_Player.FindAction("Attack", throwIfNotFound: true);
         m_Player_Interact = m_Player.FindAction("Interact", throwIfNotFound: true);
+        m_Player_Bomb = m_Player.FindAction("Bomb", throwIfNotFound: true);
         // UI
         m_UI = asset.FindActionMap("UI", throwIfNotFound: true);
         m_UI_Navigate = m_UI.FindAction("Navigate", throwIfNotFound: true);
@@ -862,6 +883,7 @@ public partial class @Player_InputActions: IInputActionCollection2, IDisposable
     private readonly InputAction m_Player_Move;
     private readonly InputAction m_Player_Attack;
     private readonly InputAction m_Player_Interact;
+    private readonly InputAction m_Player_Bomb;
     public struct PlayerActions
     {
         private @Player_InputActions m_Wrapper;
@@ -869,6 +891,7 @@ public partial class @Player_InputActions: IInputActionCollection2, IDisposable
         public InputAction @Move => m_Wrapper.m_Player_Move;
         public InputAction @Attack => m_Wrapper.m_Player_Attack;
         public InputAction @Interact => m_Wrapper.m_Player_Interact;
+        public InputAction @Bomb => m_Wrapper.m_Player_Bomb;
         public InputActionMap Get() { return m_Wrapper.m_Player; }
         public void Enable() { Get().Enable(); }
         public void Disable() { Get().Disable(); }
@@ -887,6 +910,9 @@ public partial class @Player_InputActions: IInputActionCollection2, IDisposable
             @Interact.started += instance.OnInteract;
             @Interact.performed += instance.OnInteract;
             @Interact.canceled += instance.OnInteract;
+            @Bomb.started += instance.OnBomb;
+            @Bomb.performed += instance.OnBomb;
+            @Bomb.canceled += instance.OnBomb;
         }
 
         private void UnregisterCallbacks(IPlayerActions instance)
@@ -900,6 +926,9 @@ public partial class @Player_InputActions: IInputActionCollection2, IDisposable
             @Interact.started -= instance.OnInteract;
             @Interact.performed -= instance.OnInteract;
             @Interact.canceled -= instance.OnInteract;
+            @Bomb.started -= instance.OnBomb;
+            @Bomb.performed -= instance.OnBomb;
+            @Bomb.canceled -= instance.OnBomb;
         }
 
         public void RemoveCallbacks(IPlayerActions instance)
@@ -1085,6 +1114,7 @@ public partial class @Player_InputActions: IInputActionCollection2, IDisposable
         void OnMove(InputAction.CallbackContext context);
         void OnAttack(InputAction.CallbackContext context);
         void OnInteract(InputAction.CallbackContext context);
+        void OnBomb(InputAction.CallbackContext context);
     }
     public interface IUIActions
     {

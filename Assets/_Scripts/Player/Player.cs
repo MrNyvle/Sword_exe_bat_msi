@@ -19,8 +19,9 @@ public class Player : MonoBehaviour
     private Animator _animator;
     private bool _isShooting = false;
     private float _nextShot = 0.0f;
+    private bool _isBombAvailable = true;
+    
     private List<Chest> _chests = new ();
-
     private List<Item> _inventory = new ();
     private void Awake()
     {
@@ -60,6 +61,11 @@ public class Player : MonoBehaviour
         _inputAction.Player.Interact.performed += interacting =>
         {
             Interact();
+        };
+
+        _inputAction.Player.Bomb.performed += bomb =>
+        {
+
         };
     }
 
@@ -131,6 +137,14 @@ public class Player : MonoBehaviour
             arrow = Instantiate(_arrowPrefab, transform.position, new Quaternion(0, 0, 0, 0));
             arrow.GetComponent<Rigidbody2D>().velocity = _shootDirection * 5;
             arrow.transform.rotation = Quaternion.Euler(0, 0, Mathf.Atan2(-_shootDirection.x, _shootDirection.y) * Mathf.Rad2Deg);
+        }
+    }
+
+    private void Bomb()
+    {
+        if (_inventory.Contains(GameManager.instance.CheckLootTable("Bomb")) && _isBombAvailable)
+        {
+            
         }
     }
     
