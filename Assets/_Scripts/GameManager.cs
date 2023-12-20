@@ -39,6 +39,7 @@ namespace _Scripts
         
         public List<Door> Doors => doors;
 
+        public Door EndDoor { get => endDoor; set => endDoor = value; }
 
         private void Start()
         {

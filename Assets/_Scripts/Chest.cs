@@ -39,6 +39,8 @@ namespace _Scripts
 
         public Item Item => _item;
 
+        public List<Chest> ChestsForOpen { get => _chestsForOpen; set => _chestsForOpen = value; }
+        public Door DoorForOpen { get => doorForOpen; set => doorForOpen = value; }
 
         private void Awake()
         {

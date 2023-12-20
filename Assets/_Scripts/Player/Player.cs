@@ -9,6 +9,7 @@ public class Player : MonoBehaviour
 {
     [SerializeField] private float _speed = 20.0f;
     [SerializeField] private GameObject _arrowPrefab;
+    [SerializeField] private GameObject _bombPrefab;
     [SerializeField] private float _attackSpeed = 1.0f;
 
     private Rigidbody2D _rb;
@@ -163,7 +164,7 @@ public class Player : MonoBehaviour
     {
         if (_inventory.Contains(GameManager.instance.CheckLootTable("Bomb")) && _isBombAvailable)
         {
-            
+            Instantiate(_bombPrefab, this.transform);
         }
     }
     

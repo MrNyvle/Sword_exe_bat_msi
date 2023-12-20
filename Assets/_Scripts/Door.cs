@@ -14,6 +14,8 @@ namespace _Scripts
         
         public Difficulty Difficulty => difficulty;
 
+        public List<Chest> ChestsForOpen { get => _chestsForOpen; set => _chestsForOpen = value; }
+
         public bool isOpen = false;
         
         public void ToggleMessage()
