@@ -11,7 +11,7 @@ namespace _Scripts
 {
     public class GameManager : Singleton<GameManager>
     {
-        //TODO: document qui explique l'algo; section soluce; fix locked chest (key in each others chest)
+        //TODO: finir document qui explique l'algo; section soluce; fix locked chest (key in each others chest)
 
         [SerializeField] private Player player;
         

@@ -1,0 +1,18 @@
+
+
+At first the algorithm generates chests in different difficulty zones (Early and Late);
+
+There are different loot tables for the difficulty zones.
+
+Once the chests are generated, we select an Early chest at random give it a key for the door and affect it to the door.
+
+This ensures feasibility of the level. We will do the same with the end door but this time we can choose a chest in the Early and Late difficulty zones.
+
+Then for the rest of the chests we give out random items, only the keys have a drop rate.
+
+Then for each chest with a key : if it's a door key, we affect it to the door 
+                                 if it's a end door key we affect it to the end door
+                                 if it's a regular key we affect it to a random chest of the same difficulty or above 
+
+After this setup we run the solver, it goes from the end door and recursively looks at what each chest and door needs to be opened until it stops, 
+when this is finished we can now determine the path to take to finish the level
