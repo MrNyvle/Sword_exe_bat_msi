@@ -33,8 +33,23 @@ namespace _Scripts
         private Dictionary<string, Item> _earlyLootTable = new Dictionary<string, Item>();
         private Dictionary<string, Item> _lateLootTable = new Dictionary<string, Item>();
         private Dictionary<string, Item> _lootTable = new Dictionary<string, Item>();
+
+
+        public List<Door> Doors => doors;
+
+
         private void Start()
         {
+            if (PlayerPrefs.HasKey("Seed"))
+            {
+                Random.InitState(PlayerPrefs.GetInt("Seed"));
+                _seedText.text = PlayerPrefs.GetInt("Seed").ToString();
+            }
+            else
+            {
+                _seedText.text = Random.seed.ToString();
+            }
+            
             _earlyLootTable = _itemsInEarlyChest.ToDictionary(x => x.Name, x => x);
             _lateLootTable = _itemsInLateChest.ToDictionary(x => x.Name, x => x);
             
@@ -58,7 +73,7 @@ namespace _Scripts
             
             GenerateContent();
 
-            _seedText.text = Random.seed.ToString();
+            
         }
 
         #region Generation
@@ -114,7 +129,7 @@ namespace _Scripts
             {
                 // If key and additionalData is set to 1 then it's a key for doors
                 // If key and additionalData is set to 2 then it's a key for end door
-                if (chest.Item.IsKey && chest.Item.AdditionalData == 0)
+                if (chest.Item.IsKey)
                 {
                     switch (chest.Item.AdditionalData)
                     { 
@@ -164,7 +179,6 @@ namespace _Scripts
         }
 
         #endregion
-        
         
 
         public void GiveItemToPlayer(Item item)

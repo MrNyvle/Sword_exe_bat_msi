@@ -87,8 +87,6 @@ public class Player : MonoBehaviour
             Shoot();
             _nextShot = Time.time + _attackSpeed;
         }
-        
-        Debug.Log(_inventory.Count);
     }
 
     private void OnTriggerEnter2D(Collider2D other)

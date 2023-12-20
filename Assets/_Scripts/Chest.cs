@@ -1,4 +1,5 @@
 using System.Collections.Generic;
+using System.Linq;
 using TMPro;
 using UnityEngine;
 using UnityEngine.Rendering;
@@ -25,6 +26,7 @@ namespace _Scripts
         private SpriteRenderer _spriteRenderer;
         
         private List<Chest> _chestsForOpen = new ();
+        [SerializeField] private Door doorForOpen;
         
         public bool isOpen;
         public bool isSetup;
@@ -46,6 +48,11 @@ namespace _Scripts
             _item = prmItem;
             isSetup = true;
             idText.text = id.ToString();
+
+            if (difficulty == Difficulty.Late)
+            {
+                doorForOpen = GameManager.instance.Doors.First();
+            }
         }
         
         public void ToggleMessage()

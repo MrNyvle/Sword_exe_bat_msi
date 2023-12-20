@@ -10,12 +10,24 @@ public class MainMenu : MonoBehaviour
    
    public void play()
    {
-      Random.InitState(int.Parse(text.text));
+      if (text.text.Length > 0)
+      {
+         PlayerPrefs.SetInt("Seed", int.Parse(text.text));
+      }
+      else
+      {
+         PlayerPrefs.DeleteKey("Seed");
+      }
+      
       SceneManager.LoadScene(1);
    }
 
    public void playDemo()
    {
+      if (text.text.Length > 0)
+      {
+         PlayerPrefs.SetInt("Seed", int.Parse(text.text));
+      }
       SceneManager.LoadScene(2);
    }
 }
