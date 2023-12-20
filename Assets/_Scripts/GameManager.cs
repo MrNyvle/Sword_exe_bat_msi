@@ -94,10 +94,10 @@ namespace _Scripts
             tempchest.SetupChest(_chests.IndexOf(tempchest)+ 1, doorKey);
             
             //give the chest to the doors so that we can check if chest opened before opening the door 
-            foreach (var door in doors)
-            {
-                door.AddParent(earlyChestsList[chestIndex]);
-            }
+            // foreach (var door in doors)
+            // {
+            //     door.AddParent(earlyChestsList[chestIndex]);
+            // }
             
             //Generate the end key to open the end door
             chestIndex = Random.Range(0, lateChestList.Count);
@@ -105,21 +105,18 @@ namespace _Scripts
             tempchest = lateChestList[chestIndex];
             
             //generate the key in a random late chest 
-            tempchest.SetupChest(_chests.IndexOf(tempchest)+ 1, doorKey);
+            tempchest.SetupChest(_chests.IndexOf(tempchest)+ 1, endDoorKey);
             
             //give the chest to the door so that we can check if chest opened before opening the door 
-            endDoor.AddParent(lateChestList[chestIndex]);
+            // endDoor.AddParent(lateChestList[chestIndex]);
             
             //The previous part ensures that every door is openable 
             
             
             //Now we generate random items in the chests
-            foreach (var chest in _chests)
+            foreach (var chest in _chests.Where(x => x.isSetup == false))
             {
-                if (!chest.isSetup)
-                {
-                    chest.SetupChest(_chests.IndexOf(chest)+1,GetRandomItem(chest.Difficulty));
-                }
+                chest.SetupChest(_chests.IndexOf(chest)+1,GetRandomItem(chest.Difficulty));
             }
 
             //for each chest if they have a key we will affect that key to another chest of the same difficulty or above, we also remove itself from the pool of chests 
