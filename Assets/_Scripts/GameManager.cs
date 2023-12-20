@@ -14,7 +14,8 @@ namespace _Scripts
         //TODO: finir document qui explique l'algo; section soluce; fix locked chest (key in each others chest)
 
         [SerializeField] private Player player;
-        
+        [SerializeField] private SolutionDisplayer solutionDisplayer;
+
         [SerializeField] private List<Item> _itemsInLateChest = new List<Item>();
         [SerializeField] private List<Item> _itemsInEarlyChest = new List<Item>();
         [SerializeField] private Item doorKey;
@@ -78,6 +79,7 @@ namespace _Scripts
             }
             
             GenerateContent();
+            solutionDisplayer.StartSolving();
         }
         
         #region Generation
@@ -112,7 +114,6 @@ namespace _Scripts
             {
                 List<(Difficulty, BoxCollider2D)> EarlyZones = spawnZonesList.Where(x => x.Item1 == Difficulty.Early).ToList();
                 (Difficulty, BoxCollider2D) zone = EarlyZones[Random.Range(0,EarlyZones.Count)];
-                Debug.Log(zone.Item2.gameObject.name);
 
                 (Vector3, Vector3) cornersOfCollider = GetCornersOfCollider(zone.Item2);
 
@@ -128,7 +129,6 @@ namespace _Scripts
             {
                 List<(Difficulty, BoxCollider2D)> LateZones = spawnZonesList.Where(x => x.Item1 == Difficulty.Late).ToList();
                 (Difficulty, BoxCollider2D) zone = LateZones[Random.Range(0,LateZones.Count)];
-                Debug.Log(zone.Item2.gameObject.name);
 
                 (Vector3, Vector3) cornersOfCollider = GetCornersOfCollider(zone.Item2);
 
@@ -150,9 +150,6 @@ namespace _Scripts
         {
             Vector3 topRight = new Vector2(collider2D.offset.x + collider2D.bounds.extents.x, collider2D.offset.y + collider2D.bounds.extents.y);
             Vector3 bottomLeft = new Vector2(collider2D.offset.x - collider2D.bounds.extents.x, collider2D.offset.y - collider2D.bounds.extents.y);
-            
-            Debug.Log(topRight.ToString());
-            Debug.Log(bottomLeft.ToString());
 
             topRight += collider2D.transform.position;
             bottomLeft += collider2D.transform.position;

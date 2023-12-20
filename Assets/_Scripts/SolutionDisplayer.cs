@@ -15,8 +15,8 @@ public class SolutionDisplayer : MonoBehaviour
     private List<Chest> _chestList = new List<Chest>();
 
     private int _i = 0;
-    // Start is called before the first frame update
-    void Start()
+
+    public void StartSolving()
     {
         _endDoor = GameManager.instance.EndDoor;
         _chestToOpenRecursive.Clear();
@@ -25,13 +25,6 @@ public class SolutionDisplayer : MonoBehaviour
         Solve();
         StringAppendDisplay();
     }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
-
     private void ClearDupe(ref List<Chest> ListToClearDupe)
     {
         ListToClearDupe = ListToClearDupe.Distinct().ToList();
