@@ -14,5 +14,7 @@ Then for each chest with a key : if it's a door key, we affect it to the door
                                  if it's a end door key we affect it to the end door
                                  if it's a regular key we affect it to a random chest of the same difficulty or above 
 
+The final step is to run the loop checker to recursively check if there are anny game breaking loops and break them
+
 After this setup we run the solver, it goes from the end door and recursively looks at what each chest and door needs to be opened until it stops, 
 when this is finished we can now determine the path to take to finish the level
