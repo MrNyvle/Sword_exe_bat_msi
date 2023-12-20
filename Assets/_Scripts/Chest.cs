@@ -31,7 +31,11 @@ namespace _Scripts
         public bool isOpen;
         public bool isSetup;
         
-        public Difficulty Difficulty => difficulty;
+        public Difficulty Difficulty
+        {
+            get => difficulty;
+            set => difficulty = value;
+        }
 
         public Item Item => _item;
 

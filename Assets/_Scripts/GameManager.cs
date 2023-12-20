@@ -3,10 +3,8 @@ using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
 using TMPro;
-using Unity.VisualScripting;
+using Unity.Mathematics;
 using UnityEngine;
-using UnityEngine.Serialization;
-using UnityEngine.UIElements;
 using Random = UnityEngine.Random;
 
 namespace _Scripts
@@ -21,7 +19,12 @@ namespace _Scripts
         [SerializeField] private List<Item> _itemsInEarlyChest = new List<Item>();
         [SerializeField] private Item doorKey;
         [SerializeField] private Item endDoorKey;
-        [SerializeField] private GameObject chests;
+
+        [SerializeField][Range(4,15)] private int numberOfChests;
+        [SerializeField] private GameObject spawnZones;
+        [SerializeField] private GameObject chestPrefab;
+        [SerializeField] private GameObject chestsParentObject;
+        
         private List<Chest> _chests = new();
         [SerializeField] private List<Door> doors = new();
         [SerializeField] private Door endDoor ;
@@ -49,6 +52,11 @@ namespace _Scripts
             {
                 _seedText.text = Random.seed.ToString();
             }
+
+            if (PlayerPrefs.HasKey("NbChest"))
+            {
+                numberOfChests = PlayerPrefs.GetInt("NbChest");
+            }
             
             _earlyLootTable = _itemsInEarlyChest.ToDictionary(x => x.Name, x => x);
             _lateLootTable = _itemsInLateChest.ToDictionary(x => x.Name, x => x);
@@ -61,23 +69,104 @@ namespace _Scripts
                     _lootTable.Add(pair.Key, pair.Value);
                 }
             }
+            
+            StartCoroutine(SpawnEnemies());
 
-            for (int i = 0; i < chests.transform.childCount; i++)
+            if (spawnZones != null)
             {
-                _chests.Add(chests.transform.GetChild(i).GetComponent<Chest>());
+                SpawnChests();
             }
             
-            
-            //_chests[0].SetupChest("A", new Item("Sword", 10));
-            StartCoroutine(SpawnEnemies());
-            
             GenerateContent();
-
-            
         }
 
+        
         #region Generation
+        private void SpawnChests()
+        {
+            int numberOfLateChests = numberOfChests / 2 ;
+            int numberOfEarlyChests = numberOfChests - numberOfLateChests;
 
+            List<(Difficulty, BoxCollider2D)> spawnZonesList = new List<(Difficulty, BoxCollider2D)>();
+            
+
+            for (int i = 0; i < spawnZones.transform.childCount; i++)
+            {
+                String difficultyZone = spawnZones.transform.GetChild(i).name.Split(" - ")[1];
+
+                switch (difficultyZone)
+                {
+                    case "Early":
+                        spawnZonesList.Add((Difficulty.Early,spawnZones.transform.GetChild(i).GetComponent<BoxCollider2D>()));
+                        break;
+                    case "Late":
+                        spawnZonesList.Add((Difficulty.Late,spawnZones.transform.GetChild(i).GetComponent<BoxCollider2D>()));
+                        break;
+                }
+            }
+            
+            for (int i = 0; i < numberOfEarlyChests; i++)
+            {
+                List<(Difficulty, BoxCollider2D)> EarlyZones = spawnZonesList.Where(x => x.Item1 == Difficulty.Early).ToList();
+                (Difficulty, BoxCollider2D) zone = EarlyZones[Random.Range(0,EarlyZones.Count)];
+                Debug.Log(zone.Item2.gameObject.name);
+
+                (Vector3, Vector3) cornersOfCollider = GetCornersOfCollider(zone.Item2);
+
+                Vector3 spawnPos = GetPointInSquare(cornersOfCollider, zone.Item2);
+                
+                GameObject chestGameObject = Instantiate(chestPrefab, spawnPos, Quaternion.identity, chestsParentObject.transform);
+                Chest chest = chestGameObject.GetComponent<Chest>();
+                chest.Difficulty = Difficulty.Early;
+                _chests.Add(chest);
+            }
+            
+            for (int i = 0; i < numberOfLateChests; i++)
+            {
+                List<(Difficulty, BoxCollider2D)> LateZones = spawnZonesList.Where(x => x.Item1 == Difficulty.Late).ToList();
+                (Difficulty, BoxCollider2D) zone = LateZones[Random.Range(0,LateZones.Count)];
+                Debug.Log(zone.Item2.gameObject.name);
+
+                (Vector3, Vector3) cornersOfCollider = GetCornersOfCollider(zone.Item2);
+
+                Vector3 spawnPos = GetPointInSquare(cornersOfCollider, zone.Item2);
+                
+                GameObject chestGameObject = Instantiate(chestPrefab, spawnPos, Quaternion.identity, chestsParentObject.transform);
+                Chest chest = chestGameObject.GetComponent<Chest>();
+                chest.Difficulty = Difficulty.Late;
+                _chests.Add(chest);
+            }
+        }
+
+        private (Vector3, Vector3) GetCornersOfCollider(BoxCollider2D collider2D)
+        {
+            Vector3 topRight = new Vector2(collider2D.offset.x + collider2D.bounds.extents.x, collider2D.offset.y + collider2D.bounds.extents.y);
+            Vector3 bottomLeft = new Vector2(collider2D.offset.x - collider2D.bounds.extents.x, collider2D.offset.y - collider2D.bounds.extents.y);
+            
+            Debug.Log(topRight.ToString());
+            Debug.Log(bottomLeft.ToString());
+
+            topRight += collider2D.transform.position;
+            bottomLeft += collider2D.transform.position;
+
+            return (topRight, bottomLeft);
+        }
+
+        private Vector3 GetPointInSquare((Vector3, Vector3) corners, BoxCollider2D collider2D)
+        {
+            
+            int randX = (int)Random.Range(corners.Item1.x, corners.Item2.x);
+            int randY = (int)Random.Range(corners.Item1.y, corners.Item2.y);
+            
+            Vector3 point = new Vector3(randX, randY, 0);
+            
+            if (collider2D.bounds.Contains(point) && _chests.All(x => x.gameObject.transform.position != point))
+            {
+                return point;
+            }
+            return GetPointInSquare(corners, collider2D);
+        }
+        
         private void GenerateContent()
         {
             //Generate lists of early chests and late chests
@@ -96,7 +185,7 @@ namespace _Scripts
             //give the chest to the doors so that we can check if chest opened before opening the door 
             // foreach (var door in doors)
             // {
-            //     door.AddParent(earlyChestsList[chestIndex]);
+            //     door.AddParent4(earlyChestsList[chestIndex]);
             // }
             
             //Generate the end key to open the end door
