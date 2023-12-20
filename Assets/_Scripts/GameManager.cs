@@ -11,7 +11,7 @@ namespace _Scripts
 {
     public class GameManager : Singleton<GameManager>
     {
-        //TODO: document qui explique l'algo; section soluce; boutons qui add des coffres; fix locked chest (key in each others chest)
+        //TODO: document qui explique l'algo; section soluce; fix locked chest (key in each others chest)
 
         [SerializeField] private Player player;
         
@@ -36,8 +36,7 @@ namespace _Scripts
         private Dictionary<string, Item> _earlyLootTable = new Dictionary<string, Item>();
         private Dictionary<string, Item> _lateLootTable = new Dictionary<string, Item>();
         private Dictionary<string, Item> _lootTable = new Dictionary<string, Item>();
-
-
+        
         public List<Door> Doors => doors;
 
 
@@ -79,16 +78,17 @@ namespace _Scripts
             
             GenerateContent();
         }
-
         
         #region Generation
         private void SpawnChests()
         {
+            //splits number of chest in half for each zones
             int numberOfLateChests = numberOfChests / 2 ;
             int numberOfEarlyChests = numberOfChests - numberOfLateChests;
 
             List<(Difficulty, BoxCollider2D)> spawnZonesList = new List<(Difficulty, BoxCollider2D)>();
             
+            //fills my array of colliders depending of difficulty
 
             for (int i = 0; i < spawnZones.transform.childCount; i++)
             {
@@ -105,6 +105,8 @@ namespace _Scripts
                 }
             }
             
+            //generate the amount of chests asked in the correct difficulty zone, there are more than 1 zone per difficulty and that is selected at random
+            //this part is for the early zone 
             for (int i = 0; i < numberOfEarlyChests; i++)
             {
                 List<(Difficulty, BoxCollider2D)> EarlyZones = spawnZonesList.Where(x => x.Item1 == Difficulty.Early).ToList();
@@ -120,7 +122,7 @@ namespace _Scripts
                 chest.Difficulty = Difficulty.Early;
                 _chests.Add(chest);
             }
-            
+            //this part is for the late zone 
             for (int i = 0; i < numberOfLateChests; i++)
             {
                 List<(Difficulty, BoxCollider2D)> LateZones = spawnZonesList.Where(x => x.Item1 == Difficulty.Late).ToList();
@@ -138,6 +140,11 @@ namespace _Scripts
             }
         }
 
+        /// <summary>
+        /// Returns a tuple of vector3 which corresponds to the top right corner and then bottom left corner respectively 
+        /// </summary>
+        /// <param name="collider2D"></param>
+        /// <returns>(Vector3, Vector3)</returns>
         private (Vector3, Vector3) GetCornersOfCollider(BoxCollider2D collider2D)
         {
             Vector3 topRight = new Vector2(collider2D.offset.x + collider2D.bounds.extents.x, collider2D.offset.y + collider2D.bounds.extents.y);
@@ -152,6 +159,12 @@ namespace _Scripts
             return (topRight, bottomLeft);
         }
 
+        /// <summary>
+        /// Recursive Function that returns a Vector3 that is in a given collider, and no chest is on that position
+        /// </summary>
+        /// <param name="corners"></param>
+        /// <param name="collider2D"></param>
+        /// <returns> Vector3 </returns>
         private Vector3 GetPointInSquare((Vector3, Vector3) corners, BoxCollider2D collider2D)
         {
             
@@ -260,7 +273,6 @@ namespace _Scripts
             
             if (difficulty == Difficulty.Early)
             {
-                //TODO : add all keys to loot tables
                 return chance > keyDropChance ? _earlyLootTable.Values.ToList()[Random.Range(0, _earlyLootTable.Count)] : _earlyLootTable["Key"] ;
             }
                             
@@ -268,38 +280,42 @@ namespace _Scripts
         }
 
         #endregion
-        
+
+        #region Tools/Other/PlayerInterraction
 
         public void GiveItemToPlayer(Item item)
-        {
-            player.Inventory.Add(item);
-        }
+                {
+                    player.Inventory.Add(item);
+                }
+        
+                public Item CheckLootTable(String itemName)
+                {
+                    return _lootTable[itemName];
+                }
+        
+        
+                private IEnumerator SpawnEnemies()
+                {
+                    foreach (var enemy in _enemies) 
+                    {
+                        enemy.SetActive(true);
+                        yield return new WaitForSeconds(Random.value / 2);
+                    }
+                }
+        
+                public void CopySeed()
+                {
+                    if (PlayerPrefs.HasKey("Seed"))
+                    {
+                        GUIUtility.systemCopyBuffer = PlayerPrefs.GetInt("Seed").ToString();
+                    }
+                    else
+                    {
+                       GUIUtility.systemCopyBuffer = Random.seed.ToString(); 
+                    }
+                }
 
-        public Item CheckLootTable(String itemName)
-        {
-            return _lootTable[itemName];
-        }
-
-
-        private IEnumerator SpawnEnemies()
-        {
-            foreach (var enemy in _enemies) 
-            {
-                enemy.SetActive(true);
-                yield return new WaitForSeconds(Random.value / 2);
-            }
-        }
-
-        public void CopySeed()
-        {
-            if (PlayerPrefs.HasKey("Seed"))
-            {
-                GUIUtility.systemCopyBuffer = PlayerPrefs.GetInt("Seed").ToString();
-            }
-            else
-            {
-               GUIUtility.systemCopyBuffer = Random.seed.ToString(); 
-            }
-        }
+        #endregion
+        
     }
 }
