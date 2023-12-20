@@ -119,7 +119,7 @@ namespace _Scripts
                 chest.SetupChest(_chests.IndexOf(chest)+1,GetRandomItem(chest.Difficulty));
             }
 
-            //for each chest if they have a key we will affect that key to another chest of the same difficulty or above, we also remove itself from the pool of chests 
+            //for each chest if they have a key we will affect that key to another chest of the same difficulty or above,
             //also if that key is for the end door we add it to the end door's check list
             //also if that key is for the other doors we add it to the other doors' check list
             foreach (var chest in _chests)
@@ -154,6 +154,9 @@ namespace _Scripts
                     }
                 }
             }
+            
+            // check for loops 
+            
         }
 
 
@@ -200,7 +203,14 @@ namespace _Scripts
 
         public void CopySeed()
         {
-            GUIUtility.systemCopyBuffer = Random.seed.ToString();
+            if (PlayerPrefs.HasKey("Seed"))
+            {
+                GUIUtility.systemCopyBuffer = PlayerPrefs.GetInt("Seed").ToString();
+            }
+            else
+            {
+               GUIUtility.systemCopyBuffer = Random.seed.ToString(); 
+            }
         }
     }
 }
