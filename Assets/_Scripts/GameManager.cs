@@ -2,9 +2,11 @@ using System;
 using System.Collections.Generic;
 using System.Collections;
 using System.Linq;
+using NaughtyAttributes;
 using TMPro;
 using Unity.Mathematics;
 using UnityEngine;
+using UnityEngine.Serialization;
 using Random = UnityEngine.Random;
 
 namespace _Scripts
@@ -20,8 +22,9 @@ namespace _Scripts
         [SerializeField] private List<Item> _itemsInEarlyChest = new List<Item>();
         [SerializeField] private Item doorKey;
         [SerializeField] private Item endDoorKey;
+        [SerializeField] private Item uselessItem;
 
-        [SerializeField][Range(4,15)] private int numberOfChests;
+        [SerializeField][Range(0,15)] private int numberOfChests;
         [SerializeField] private GameObject spawnZones;
         [SerializeField] private GameObject chestPrefab;
         [SerializeField] private GameObject chestsParentObject;
@@ -31,12 +34,14 @@ namespace _Scripts
         [SerializeField] private Door endDoor ;
         [SerializeField] private List<GameObject> _enemies = new List<GameObject>();
         [SerializeField] private TextMeshProUGUI _seedText;
-        [SerializeField] private int keyDropChance;
+        [SerializeField][Range(0,100)] private int keyDropChance;
         
 
         private Dictionary<string, Item> _earlyLootTable = new Dictionary<string, Item>();
         private Dictionary<string, Item> _lateLootTable = new Dictionary<string, Item>();
         private Dictionary<string, Item> _lootTable = new Dictionary<string, Item>();
+
+        private int _seed = 0;
         
         public List<Door> Doors => doors;
 
@@ -45,14 +50,26 @@ namespace _Scripts
 
         private void Start()
         {
+
+            if (numberOfChests == 0)
+            {
+                for (int i = 0; i < chestsParentObject.transform.childCount; i++)
+                {
+                    _chests.Add(chestsParentObject.transform.GetChild(i).GetComponent<Chest>());
+                }
+            }
+            
             if (PlayerPrefs.HasKey("Seed"))
             {
                 Random.InitState(PlayerPrefs.GetInt("Seed"));
+                _seed = PlayerPrefs.GetInt("Seed");
                 _seedText.text = PlayerPrefs.GetInt("Seed").ToString();
             }
             else
             {
-                _seedText.text = Random.seed.ToString();
+                _seed = (int)DateTime.Now.Ticks;
+                Random.InitState(_seed);
+                _seedText.text = _seed.ToString();
             }
 
             if (PlayerPrefs.HasKey("NbChest"))
@@ -255,11 +272,112 @@ namespace _Scripts
                     }
                 }
             }
+
+            // will check for game breaking loops and breaks them
+            CheckAndBreakLoops();
+        }
+        
+        /// <summary>
+        /// Continually breaks loops as long as there are any 
+        /// </summary>
+        private void CheckAndBreakLoops()
+        {
+            bool flag = true;
+            while (flag)
+            {
+                foreach (var chest in _chests)
+                {
+                    chest.isChecked = false;
+                }
+                flag = BreakLoops();
+                Debug.Log(flag);
+            }
+        }
+        
+        
+        /// <summary>
+        ///  returns true if it found a loop and broke it and returns false if there was no loop to break 
+        /// </summary>
+        /// <returns> bool </returns>
+        private bool BreakLoops()
+        {
+            //Check for early Door loop
+            (bool, int, int) loopEarly = (false, -2, -2);
             
-            // check for loops 
+            foreach (var chest in doors[0].ChestsForOpen)
+            {
+                loopEarly = LoopChecker(chest);
+            }
             
+            //Check for early EndDoor loop
+            
+            (bool, int, int) loopLate = (false, -2, -2);
+            
+            foreach (var chest in endDoor.ChestsForOpen)
+            {
+                loopLate = LoopChecker(chest);
+            }
+
+            if (loopEarly.Item1)
+            {
+                RemoveKeyFromChest(loopEarly.Item2, loopEarly.Item3);
+                return true;
+            }
+            
+            if (loopLate.Item1)
+            {
+                RemoveKeyFromChest(loopLate.Item2, loopLate.Item3);
+                
+                return true;
+            }
+
+            return false;
         }
 
+
+        /// <summary>
+        /// removes a key from a chest and also removes the reference to the other chest, and replace the item by a useless one 
+        /// </summary>
+        /// <param name="idChestToRemoveKey"></param>
+        /// <param name="idChestToRemoveRef"></param>
+        private void RemoveKeyFromChest(int idChestToRemoveKey, int idChestToRemoveRef)
+        {
+
+            Chest chestToRemoveKey = _chests.First(x => x.id == idChestToRemoveKey);
+            Chest chestToRemoveRef = _chests.First(x => x.id == idChestToRemoveRef);
+
+            chestToRemoveKey.ChestsForOpen.Remove(chestToRemoveRef);
+
+            chestToRemoveKey.Item = uselessItem;
+        }
+
+
+        /// <summary>
+        /// Returns true if there is a loop, and returns the link to break ( two chest ids) 
+        /// </summary>
+        /// <param name="prmChest"></param>
+        /// <returns>(bool, int, int)</returns>
+        
+        private (bool, int, int) LoopChecker(Chest prmChest)
+        {
+            prmChest.isChecked = true;
+
+            (bool, int, int) foreachEnd = (false, -1, -1);
+            
+            foreach (var chest in prmChest.ChestsForOpen)
+            {
+                if (chest.isChecked)
+                {
+                    return (true, prmChest.id, chest.id);
+                }
+                else if (chest.ChestsForOpen.Count > 0)
+                {
+                    foreachEnd = LoopChecker(chest);
+                }
+            }
+
+            return foreachEnd;
+        }
 
         /// <summary>
         /// Returns a random item from the loot table, drop for keys have a %
@@ -303,15 +421,8 @@ namespace _Scripts
                 }
         
                 public void CopySeed()
-                {
-                    if (PlayerPrefs.HasKey("Seed"))
-                    {
-                        GUIUtility.systemCopyBuffer = PlayerPrefs.GetInt("Seed").ToString();
-                    }
-                    else
-                    {
-                       GUIUtility.systemCopyBuffer = Random.seed.ToString(); 
-                    }
+                { 
+                    GUIUtility.systemCopyBuffer = _seedText.text; 
                 }
 
         #endregion

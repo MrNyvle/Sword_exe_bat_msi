@@ -2,6 +2,7 @@ using _Scripts;
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using NaughtyAttributes;
 using TMPro;
 using Unity.VisualScripting;
 using UnityEngine;
@@ -20,6 +21,7 @@ public class SolutionDisplayer : MonoBehaviour
     private int _i = 0;
     private bool _doOnce = false;
 
+    [Button("Solve")]
     public void StartSolving()
     {
         _endDoor = GameManager.instance.EndDoor;

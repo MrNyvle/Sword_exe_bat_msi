@@ -25,11 +25,12 @@ namespace _Scripts
         private Animator _animator;
         private SpriteRenderer _spriteRenderer;
         
-        private List<Chest> _chestsForOpen = new ();
+        public List<Chest> _chestsForOpen = new ();
         [SerializeField] private Door doorForOpen;
         
         public bool isOpen;
         public bool isSetup;
+        public bool isChecked = false;
         
         public Difficulty Difficulty
         {
@@ -37,7 +38,11 @@ namespace _Scripts
             set => difficulty = value;
         }
 
-        public Item Item => _item;
+        public Item Item
+        {
+            get => _item;
+            set => _item = value;
+        }
 
         public List<Chest> ChestsForOpen { get => _chestsForOpen; set => _chestsForOpen = value; }
         public Door DoorForOpen { get => doorForOpen; set => doorForOpen = value; }
