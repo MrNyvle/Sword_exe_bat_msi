@@ -1,21 +1,23 @@
 using System.Collections;
 using System.Collections.Generic;
+using TMPro;
 using UnityEngine;
 
 public class PlayerUI : MonoBehaviour
 {
+    public TextMeshProUGUI EndDoorRequirement;
+    public TextMeshProUGUI ZoneTwoDoorRequirement;
+    public GameObject ChestRequirement;
 
-    [SerializeField] private List<GameObject> _keysList = new List<GameObject>();
+    private List<GameObject> _chestRequirementsHolder = new List<GameObject>();
 
-    // Start is called before the first frame update
-    void Start()
+    public List<GameObject> ChestRequirementsHolder { get => _chestRequirementsHolder; set => _chestRequirementsHolder = value; }
+
+    public GameObject SpawnNewLine(int chestID)
     {
-        _keysList[Random.Range(0, _keysList.Count)].SetActive(true);
-    }
-
-    // Update is called once per frame
-    void Update()
-    {
-        
+        var go = Instantiate(ChestRequirement, this.transform);
+        _chestRequirementsHolder.Add(go);
+        go.GetComponent<TextMeshProUGUI>().text = "Chest required to Open Chest " + chestID + ": ";
+        return go;
     }
 }
