@@ -28,6 +28,11 @@ public class MainMenu : MonoBehaviour
       {
          PlayerPrefs.SetInt("Seed", int.Parse(text.text));
       }
+      else
+      {
+         PlayerPrefs.DeleteKey("Seed");
+      }
+      
       SceneManager.LoadScene(2);
    }
 }
